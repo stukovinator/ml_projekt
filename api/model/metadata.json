@@ -1,0 +1,45 @@
+{
+  "feature_columns": [
+    "displacement",
+    "horsepower",
+    "weight",
+    "acceleration",
+    "cylinders_3",
+    "cylinders_4",
+    "cylinders_5",
+    "cylinders_6",
+    "cylinders_8",
+    "model_70",
+    "model_71",
+    "model_72",
+    "model_73",
+    "model_74",
+    "model_75",
+    "model_76",
+    "model_77",
+    "model_78",
+    "model_79",
+    "model_80",
+    "model_81",
+    "model_82",
+    "origin_1",
+    "origin_2",
+    "origin_3"
+  ],
+  "mae": 2.332,
+  "r2": 0.8,
+  "training_samples": 313,
+  "test_samples": 79,
+  "feature_importance": {
+    "displacement": 0.4855,
+    "horsepower": 0.1646,
+    "cylinders_4": 0.1107,
+    "weight": 0.1105,
+    "acceleration": 0.0332
+  },
+  "mpg_stats": {
+    "mean": 23.45,
+    "min": 9.0,
+    "max": 46.6
+  }
+}
