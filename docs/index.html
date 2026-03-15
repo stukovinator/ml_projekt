@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fuel Intel — System predykcji zużycia paliwa</title>
+    <title>Spalo — Kalkulator zużycia paliwa</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
             --bg: #f7f7f5;
@@ -37,57 +36,59 @@
             min-height: 100vh;
         }
 
-        /* ── HEADER ─────────────────────────────────────── */
+        /* ── HEADER ─────────────────────────── */
         header {
             background: var(--text);
-            padding: 0 48px;
+            height: 60px;
+            padding: 0 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 64px;
         }
 
         .logo-wrap {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
-        .logo-icon {
-            width: 32px;
-            height: 32px;
+        .logo-mark {
+            width: 30px;
+            height: 30px;
             background: white;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text);
+            letter-spacing: -0.03em;
             flex-shrink: 0;
         }
 
-        .logo-text {
-            font-size: 15px;
+        .logo-name {
+            font-size: 16px;
             font-weight: 600;
             color: white;
             letter-spacing: -0.02em;
         }
 
-        .logo-divider {
+        .logo-sep {
             width: 1px;
-            height: 20px;
+            height: 18px;
             background: rgba(255, 255, 255, 0.2);
         }
 
-        .logo-sub {
+        .logo-desc {
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            font-weight: 400;
+            color: rgba(255, 255, 255, 0.45);
         }
 
-        .header-right {
+        .header-badges {
             display: flex;
             gap: 8px;
-            align-items: center;
         }
 
         .badge {
@@ -96,12 +97,6 @@
             padding: 4px 10px;
             border-radius: 100px;
             letter-spacing: 0.04em;
-        }
-
-        .badge-light {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .badge-green {
@@ -122,113 +117,210 @@
             animation: pulse 2s infinite;
         }
 
+        .badge-dim {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
         @keyframes pulse {
 
             0%,
             100% {
-                opacity: 1;
+                opacity: 1
             }
 
             50% {
-                opacity: 0.3;
+                opacity: 0.3
             }
         }
 
-        /* ── MAIN ───────────────────────────────────────── */
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 48px;
-        }
-
-        /* ── STATS ──────────────────────────────────────── */
-        .stats-row {
+        /* ── LAYOUT ─────────────────────────── */
+        .app {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 36px;
-            background: var(--border);
+            grid-template-columns: 380px 1fr;
+            height: calc(100vh - 60px);
         }
 
-        .stat-cell {
+        /* ── SIDEBAR ────────────────────────── */
+        .sidebar {
             background: var(--surface);
-            padding: 20px 24px;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
             display: flex;
-            align-items: center;
-            gap: 16px;
+            flex-direction: column;
         }
 
-        .stat-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0;
+        .sidebar-inner {
+            padding: 24px;
+            flex: 1;
         }
 
-        .stat-icon-blue {
-            background: #eff6ff;
-        }
-
-        .stat-icon-green {
-            background: #f0fdf4;
-        }
-
-        .stat-icon-amber {
-            background: #fffbeb;
-        }
-
-        .stat-icon-gray {
-            background: #f8f8f6;
-        }
-
-        .stat-num {
-            font-size: 22px;
-            font-weight: 600;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            margin-bottom: 2px;
-        }
-
-        .stat-desc {
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        /* ── SECTION TITLE ──────────────────────────────── */
         .section-title {
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.08em;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--muted);
             margin-bottom: 12px;
         }
 
-        /* ── CARD ───────────────────────────────────────── */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
         }
 
-        /* ── FIELD ──────────────────────────────────────── */
-        .field-wrap {
+        /* ── SEARCH ─────────────────────────── */
+        .search-wrap {
             position: relative;
+            margin-bottom: 8px;
         }
 
-        .field-label {
-            font-size: 11px;
+        .search-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 12px 9px 34px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input:focus {
+            border-color: var(--text);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .search-label {
+            font-size: 10px;
             font-weight: 500;
             color: var(--muted);
-            letter-spacing: 0.04em;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .point-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .dot-a {
+            background: #111;
+        }
+
+        .dot-b {
+            background: var(--accent);
+        }
+
+        .suggestions {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .suggestion-item {
+            padding: 9px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            line-height: 1.3;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background: var(--bg);
+        }
+
+        .suggestion-item .s-name {
+            font-weight: 500;
+        }
+
+        .suggestion-item .s-detail {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        /* Route info */
+        .route-info {
+            display: none;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+        }
+
+        .route-info.show {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .route-dist {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+        }
+
+        .route-time {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        .route-clear {
+            font-size: 11px;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: white;
+            transition: all 0.15s;
+        }
+
+        .route-clear:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* ── FIELDS ─────────────────────────── */
+        .field-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             margin-bottom: 5px;
             display: flex;
@@ -237,20 +329,19 @@
         }
 
         .tooltip-icon {
-            width: 14px;
-            height: 14px;
+            width: 13px;
+            height: 13px;
             border-radius: 50%;
             background: var(--border);
             color: var(--muted);
-            font-size: 9px;
+            font-size: 8px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: help;
             font-style: normal;
-            font-weight: 600;
+            font-weight: 700;
             position: relative;
-            flex-shrink: 0;
         }
 
         .tooltip-icon:hover .tooltip-box {
@@ -270,11 +361,11 @@
             line-height: 1.5;
             padding: 8px 12px;
             border-radius: 6px;
-            width: 200px;
+            width: 190px;
             text-align: left;
             letter-spacing: 0;
             text-transform: none;
-            z-index: 100;
+            z-index: 999;
             white-space: normal;
             pointer-events: none;
         }
@@ -289,14 +380,19 @@
             border-top-color: var(--text);
         }
 
+        .field-wrap {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
         .field-input {
             width: 100%;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 9px 12px;
+            padding: 9px 36px 9px 12px;
             font-family: 'DM Mono', monospace;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text);
             outline: none;
             transition: border-color 0.15s;
@@ -314,11 +410,11 @@
 
         .field-unit {
             position: absolute;
-            right: 12px;
+            right: 11px;
             top: 50%;
             transform: translateY(-50%);
             font-family: 'DM Mono', monospace;
-            font-size: 11px;
+            font-size: 10px;
             color: var(--muted);
             pointer-events: none;
         }
@@ -328,72 +424,101 @@
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 9px 12px;
+            padding: 9px 28px 9px 12px;
             font-family: 'DM Sans', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text);
             outline: none;
             cursor: pointer;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
+            background-position: right 10px center;
+            margin-bottom: 12px;
         }
 
-        /* ── BUTTON ─────────────────────────────────────── */
-        .btn-primary {
+        .fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 12px;
+        }
+
+        /* ── BUTTON ─────────────────────────── */
+        .btn-calc {
             width: 100%;
             background: var(--text);
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 11px 24px;
+            padding: 11px 20px;
             font-family: 'DM Sans', sans-serif;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: opacity 0.15s;
-            letter-spacing: -0.01em;
+            margin-top: 4px;
         }
 
-        .btn-primary:hover {
+        .btn-calc:hover {
             opacity: 0.8;
         }
 
-        .btn-primary:disabled {
-            opacity: 0.4;
+        .btn-calc:disabled {
+            opacity: 0.35;
             cursor: not-allowed;
         }
 
-        /* ── RESULT ─────────────────────────────────────── */
-        #result-panel {
+        /* ── RESULTS ────────────────────────── */
+        #results {
             display: none;
-            animation: fadeUp 0.3s ease;
         }
 
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .result-number {
-            font-size: 48px;
-            font-weight: 300;
-            letter-spacing: -0.04em;
+        .result-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .result-card.accent {
+            background: var(--text);
+            border-color: var(--text);
+        }
+
+        .result-num {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.03em;
             line-height: 1;
+            color: var(--text);
         }
 
-        .result-unit {
-            font-size: 12px;
+        .result-card.accent .result-num {
+            color: white;
+        }
+
+        .result-lbl {
+            font-size: 11px;
             color: var(--muted);
-            margin-top: 4px;
+            margin-top: 3px;
+        }
+
+        .result-card.accent .result-lbl {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .rating-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
         }
 
         .rating-track {
@@ -401,109 +526,54 @@
             background: var(--border);
             border-radius: 2px;
             overflow: hidden;
-            margin-top: 6px;
+            margin-bottom: 16px;
         }
 
         .rating-fill {
             height: 100%;
             border-radius: 2px;
-            transition: width 0.7s ease, background 0.3s;
+            transition: width 0.7s ease;
             width: 0%;
         }
 
-        .result-pill {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 14px 18px;
+        /* ── MAP ────────────────────────────── */
+        #map {
+            height: 100%;
+            z-index: 1;
         }
 
-        .result-pill-num {
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: -0.03em;
+        /* Leaflet overrides */
+        .leaflet-control-attribution {
+            font-size: 10px !important;
         }
 
-        .result-pill-label {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
+        /* ── SCROLLBAR ──────────────────────── */
+        .sidebar::-webkit-scrollbar {
+            width: 3px;
         }
 
-        /* ── IDLE ───────────────────────────────────────── */
-        #idle-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-            gap: 8px;
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
         }
 
-        /* ── FEATURES ───────────────────────────────────── */
-        .feat-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0;
-        }
-
-        .feat-row+.feat-row {
-            border-top: 1px solid var(--border);
-        }
-
-        .feat-name {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: var(--muted);
-            width: 120px;
-            flex-shrink: 0;
-        }
-
-        .feat-track {
-            flex: 1;
-            height: 3px;
+        .sidebar::-webkit-scrollbar-thumb {
             background: var(--border);
             border-radius: 2px;
-            overflow: hidden;
         }
 
-        .feat-fill {
-            height: 100%;
-            background: var(--text);
-            border-radius: 2px;
-            width: 0%;
-            transition: width 0.9s ease;
-        }
+        @media (max-width: 800px) {
+            .app {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 300px;
+                height: auto;
+            }
 
-        .feat-pct {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: var(--muted);
-            width: 36px;
-            text-align: right;
-        }
-
-        @media (max-width: 900px) {
             header {
-                padding: 0 24px;
+                padding: 0 20px;
             }
 
-            main {
-                padding: 28px 24px;
-            }
-
-            .stats-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .main-grid,
-            .bottom-grid {
-                grid-template-columns: 1fr !important;
-            }
-
-            .logo-divider,
-            .logo-sub {
+            .logo-sep,
+            .logo-desc {
                 display: none;
             }
         }
@@ -512,380 +582,371 @@
 
 <body>
 
-    <!-- HEADER -->
     <header>
         <div class="logo-wrap">
-            <div class="logo-icon"
-                style="font-family:'DM Mono',monospace; font-size:11px; font-weight:500; color:#111; letter-spacing:-0.02em;">
-                FI</div>
-            <span class="logo-text">Fuel Intel</span>
-            <div class="logo-divider"></div>
-            <span class="logo-sub">System predykcji zużycia paliwa · Logistyka wojskowa</span>
+            <div class="logo-mark">SP</div>
+            <span class="logo-name">Spalo</span>
+            <div class="logo-sep"></div>
+            <span class="logo-desc">Kalkulator zużycia paliwa</span>
         </div>
-        <div class="header-right">
+        <div class="header-badges">
             <span class="badge badge-green" id="model-badge">Model aktywny</span>
-            <span class="badge badge-light">Random Forest · AutoMPG</span>
+            <span class="badge badge-dim">Random Forest · NRCan 2015–2024</span>
         </div>
     </header>
 
-    <main>
+    <div class="app">
 
-        <!-- STATS -->
-        <div class="stats-row">
-            <div class="stat-cell">
-                <div class="stat-icon stat-icon-blue">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M2 12L6 7L9 10L13 4" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="stat-num" id="stat-mae">—</div>
-                    <div class="stat-desc">Średni błąd (MAE)</div>
-                </div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-icon stat-icon-green">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <circle cx="8" cy="8" r="5.5" stroke="#16a34a" stroke-width="1.5" />
-                        <path d="M5.5 8L7 9.5L10.5 6" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="stat-num" id="stat-r2">—</div>
-                    <div class="stat-desc">Dokładność modelu R²</div>
-                </div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-icon stat-icon-amber">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <rect x="2" y="4" width="12" height="9" rx="1.5" stroke="#d97706" stroke-width="1.5" />
-                        <path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" stroke="#d97706" stroke-width="1.5" />
-                        <path d="M5 8h6M5 10.5h4" stroke="#d97706" stroke-width="1.5" stroke-linecap="round" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="stat-num" id="stat-samples">—</div>
-                    <div class="stat-desc">Próbki treningowe</div>
-                </div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-icon stat-icon-gray">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M3 13V8M6 13V5M9 13V7M12 13V3" stroke="#666" stroke-width="1.5"
-                            stroke-linecap="round" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="stat-num" id="stat-features">—</div>
-                    <div class="stat-desc">Wektory cech</div>
-                </div>
-            </div>
-        </div>
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-inner">
 
-        <!-- MAIN GRID -->
-        <div class="main-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+                <!-- TRASA -->
+                <p class="section-title">Trasa</p>
 
-            <!-- FORM -->
-            <div>
-                <p class="section-title">Parametry pojazdu</p>
-                <div class="card">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
-
-                        <div>
-                            <p class="field-label">
-                                Pojemność silnika
-                                <span class="tooltip-icon">i
-                                    <span class="tooltip-box">Pojemność skokowa silnika w cm³. Większa pojemność zwykle
-                                        oznacza wyższe zużycie paliwa.</span>
-                                </span>
-                            </p>
-                            <div class="field-wrap">
-                                <input class="field-input" type="number" id="inp-displacement" value="3300"
-                                    style="padding-right:40px" />
-                                <span class="field-unit">cm³</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="field-label">
-                                Moc silnika
-                                <span class="tooltip-icon">i
-                                    <span class="tooltip-box">Maksymalna moc silnika w kilowatach. Wyższa moc zazwyczaj
-                                        wiąże się z większym zużyciem.</span>
-                                </span>
-                            </p>
-                            <div class="field-wrap">
-                                <input class="field-input" type="number" id="inp-horsepower" value="75"
-                                    style="padding-right:32px" />
-                                <span class="field-unit">kW</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="field-label">
-                                Masa pojazdu
-                                <span class="tooltip-icon">i
-                                    <span class="tooltip-box">Masa własna pojazdu w kilogramach. Jeden z najsilniejszych
-                                        predyktorów zużycia paliwa.</span>
-                                </span>
-                            </p>
-                            <div class="field-wrap">
-                                <input class="field-input" type="number" id="inp-weight" value="1400"
-                                    style="padding-right:32px" />
-                                <span class="field-unit">kg</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="field-label">
-                                Przyspieszenie 0–97 km/h
-                                <span class="tooltip-icon">i
-                                    <span class="tooltip-box">Czas przyspieszenia od 0 do 97 km/h w sekundach. Niższa
-                                        wartość = bardziej dynamiczny pojazd.</span>
-                                </span>
-                            </p>
-                            <div class="field-wrap">
-                                <input class="field-input" type="number" id="inp-acceleration" value="15"
-                                    style="padding-right:16px" />
-                                <span class="field-unit">s</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="field-label">Cylindry</p>
-                            <select class="field-select" id="inp-cylinders">
-                                <option value="4">4 cyl — Lekki</option>
-                                <option value="6" selected>6 cyl — Średni</option>
-                                <option value="8">8 cyl — Ciężki</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <p class="field-label">Pochodzenie pojazdu</p>
-                            <select class="field-select" id="inp-origin">
-                                <option value="1" selected>USA</option>
-                                <option value="2">Europa</option>
-                                <option value="3">Azja</option>
-                            </select>
-                        </div>
-
+                <div style="margin-bottom:10px;">
+                    <p class="search-label"><span class="point-dot dot-a"></span> Punkt startowy</p>
+                    <div class="search-wrap" id="wrap-a">
+                        <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <circle cx="6" cy="6" r="4" stroke="#8a8a84" stroke-width="1.3" />
+                            <path d="M9.5 9.5L12 12" stroke="#8a8a84" stroke-width="1.3" stroke-linecap="round" />
+                        </svg>
+                        <input class="search-input" id="search-a" placeholder="Wpisz miasto lub adres..."
+                            autocomplete="off" />
+                        <div class="suggestions" id="sug-a"></div>
                     </div>
+                    <div id="label-a" style="font-size:11px; color:var(--green); min-height:16px; margin-top:2px;">
+                    </div>
+                </div>
 
-                    <div style="margin-bottom:14px;">
+                <div style="margin-bottom:14px;">
+                    <p class="search-label"><span class="point-dot dot-b"></span> Punkt docelowy</p>
+                    <div class="search-wrap" id="wrap-b">
+                        <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <circle cx="6" cy="6" r="4" stroke="#8a8a84" stroke-width="1.3" />
+                            <path d="M9.5 9.5L12 12" stroke="#8a8a84" stroke-width="1.3" stroke-linecap="round" />
+                        </svg>
+                        <input class="search-input" id="search-b" placeholder="Wpisz miasto lub adres..."
+                            autocomplete="off" />
+                        <div class="suggestions" id="sug-b"></div>
+                    </div>
+                    <div id="label-b" style="font-size:11px; color:var(--accent); min-height:16px; margin-top:2px;">
+                    </div>
+                </div>
+
+                <!-- Route info -->
+                <div class="route-info" id="route-info">
+                    <div>
+                        <div class="route-dist" id="route-dist">— km</div>
+                        <div class="route-time" id="route-time">czas trasy</div>
+                    </div>
+                    <button class="route-clear" onclick="clearRoute()">Wyczyść</button>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- PARAMETRY -->
+                <p class="section-title">Parametry pojazdu</p>
+
+                <div class="fields-grid">
+                    <div>
                         <p class="field-label">
-                            Dystans misji
-                            <span class="tooltip-icon">i
-                                <span class="tooltip-box">Łączna planowana odległość misji. Służy do obliczenia
-                                    całkowitego zapotrzebowania na paliwo.</span>
-                            </span>
+                            Pojemność
+                            <span class="tooltip-icon">i<span class="tooltip-box">Pojemność skokowa silnika w litrach,
+                                    np. 1.9, 2.0, 3.5</span></span>
                         </p>
                         <div class="field-wrap">
-                            <input class="field-input" type="number" id="inp-distance" value="500"
-                                style="padding-right:32px" />
-                            <span class="field-unit">km</span>
+                            <input class="field-input" type="number" id="inp-engine" value="1.9" step="0.1" min="0.5"
+                                max="8.0" />
+                            <span class="field-unit">L</span>
                         </div>
                     </div>
-
-                    <button class="btn-primary" id="predict-btn" onclick="predict()">
-                        Oblicz zapotrzebowanie na paliwo
-                    </button>
-                </div>
-            </div>
-
-            <!-- OUTPUT -->
-            <div>
-                <p class="section-title">Wynik analizy</p>
-                <div class="card"
-                    style="min-height:340px; display:flex; flex-direction:column; justify-content:center;">
-
-                    <div id="idle-state">
-                        <div
-                            style="width:32px; height:32px; border-radius:50%; border:1.5px solid var(--border); margin-bottom:4px;">
-                        </div>
-                        <p style="font-size:13px; color:var(--muted);">Wprowadź parametry pojazdu aby rozpocząć</p>
-                    </div>
-
-                    <div id="result-panel">
-                        <div style="display:flex; gap:28px; margin-bottom:20px; align-items:flex-end;">
-                            <div>
-                                <p class="field-label">Zużycie paliwa</p>
-                                <div class="result-number" id="res-l100">—</div>
-                                <div class="result-unit">litry / 100 km</div>
-                            </div>
-                            <div style="width:1px; background:var(--border); align-self:stretch;"></div>
-                            <div>
-                                <p class="field-label">Wynik modelu (MPG)</p>
-                                <div class="result-number" style="font-size:34px; color:var(--muted);" id="res-mpg">—
-                                </div>
-                                <div class="result-unit">mil na galon (wewnętrzny)</div>
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom:18px;">
-                            <div
-                                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                                <p class="field-label">Ocena zużycia</p>
-                                <span id="rating-label"
-                                    style="font-size:12px; font-weight:600; letter-spacing:0.02em;">—</span>
-                            </div>
-                            <div class="rating-track">
-                                <div class="rating-fill" id="rating-bar"></div>
-                            </div>
-                        </div>
-
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                            <div class="result-pill">
-                                <div class="result-pill-num" id="res-total">—</div>
-                                <div class="result-pill-label">Łączna ilość paliwa</div>
-                            </div>
-                            <div class="result-pill">
-                                <div class="result-pill-num" id="res-cans">—</div>
-                                <div class="result-pill-label">Kanistrów 20 L</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTTOM GRID -->
-        <div class="bottom-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-            <div>
-                <p class="section-title">Ważność cech modelu</p>
-                <div class="card">
-                    <div id="feature-bars">
-                        <p style="font-size:13px; color:var(--muted);">Ładowanie...</p>
+                    <div>
+                        <p class="field-label">
+                            Cylindry
+                            <span class="tooltip-icon">i<span class="tooltip-box">Liczba cylindrów silnika. Typowo:
+                                    3-cyl małe auta, 4-cyl kompakty, 6-cyl większe, 8-cyl V8.</span></span>
+                        </p>
+                        <select class="field-select" id="inp-cylinders">
+                            <option value="3">3 cyl</option>
+                            <option value="4" selected>4 cyl</option>
+                            <option value="6">6 cyl</option>
+                            <option value="8">8 cyl</option>
+                            <option value="10">10 cyl</option>
+                            <option value="12">12 cyl</option>
+                        </select>
                     </div>
                 </div>
-            </div>
-            <div>
-                <p class="section-title">Zużycie paliwa wg klasy pojazdu</p>
-                <div class="card">
-                    <div style="position:relative; height:220px;">
-                        <canvas id="fleet-chart"></canvas>
+
+                <div>
+                    <p class="field-label">
+                        Klasa pojazdu
+                        <span class="tooltip-icon">i<span class="tooltip-box">Kategoria pojazdu. SUV-y i pickupy spalają
+                                znacznie więcej niż kompakty tej samej pojemności.</span></span>
+                    </p>
+                    <select class="field-select" id="inp-class">
+                        <option value="Compact">Kompakt</option>
+                        <option value="Mid-size">Średniej wielkości</option>
+                        <option value="Full-size">Duży sedan</option>
+                        <option value="SUV: Small">SUV mały</option>
+                        <option value="SUV: Standard">SUV standardowy</option>
+                        <option value="Pickup truck: Small">Pickup mały</option>
+                        <option value="Pickup truck: Standard">Pickup standardowy</option>
+                        <option value="Minivan">Minivan</option>
+                        <option value="Van: Passenger">Bus pasażerski</option>
+                    </select>
+                </div>
+
+                <div class="fields-grid">
+                    <div>
+                        <p class="field-label">Paliwo</p>
+                        <select class="field-select" id="inp-fuel">
+                            <option value="X">Benzyna 95</option>
+                            <option value="Z">Benzyna 98</option>
+                            <option value="D">Diesel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p class="field-label">
+                            Cena paliwa
+                            <span class="tooltip-icon">i<span class="tooltip-box">Aktualna cena paliwa za litr w
+                                    złotych. Służy do obliczenia kosztu trasy.</span></span>
+                        </p>
+                        <div class="field-wrap">
+                            <input class="field-input" type="number" id="inp-price" value="6.50" step="0.01" min="1" />
+                            <span class="field-unit">zł/L</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-    </main>
+                <button class="btn-calc" id="calc-btn" onclick="calculate()">
+                    Oblicz zużycie
+                </button>
+
+                <div class="divider"></div>
+
+                <!-- WYNIKI -->
+                <div id="results">
+                    <p class="section-title">Wyniki</p>
+
+                    <div class="result-grid">
+                        <div class="result-card accent">
+                            <div class="result-num" id="res-l100">—</div>
+                            <div class="result-lbl">L / 100 km</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-num" id="res-total">—</div>
+                            <div class="result-lbl">Łącznie litrów</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-num" id="res-cost">—</div>
+                            <div class="result-lbl">Koszt w zł</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-num" id="res-dist">—</div>
+                            <div class="result-lbl">Kilometrów</div>
+                        </div>
+                    </div>
+
+                    <div class="rating-row">
+                        <span class="field-label" style="margin-bottom:0;">Ocena zużycia</span>
+                        <span id="rating-label" style="font-size:12px; font-weight:600;">—</span>
+                    </div>
+                    <div class="rating-track">
+                        <div class="rating-fill" id="rating-bar"></div>
+                    </div>
+
+                    <p style="font-size:11px; color:var(--muted); line-height:1.5;" id="res-note"></p>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- MAP -->
+        <div id="map"></div>
+
+    </div>
 
     <script>
         const API = 'https://mlprojekt-production.up.railway.app';
 
-        // Przeliczniki imperialny → metryczny
-        // cu in → cm³: × 16.387
-        // lbs → kg: × 0.4536
-        // HP → kW: × 0.7457
-        function toImperial(disp_cm3, hp_kw, weight_kg) {
-            return {
-                displacement: Math.round(disp_cm3 / 16.387),
-                horsepower: Math.round(hp_kw / 0.7457),
-                weight: Math.round(weight_kg / 0.4536),
-            };
+        // ── MAPA ─────────────────────────────────────────────
+        const map = L.map('map', { zoomControl: true }).setView([52.0, 19.5], 6);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap © CARTO',
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Markery
+        const iconA = L.divIcon({
+            html: `<div style="width:12px;height:12px;border-radius:50%;background:#111;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
+            className: '', iconAnchor: [6, 6]
+        });
+        const iconB = L.divIcon({
+            html: `<div style="width:12px;height:12px;border-radius:50%;background:#2563eb;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
+            className: '', iconAnchor: [6, 6]
+        });
+
+        let markerA = null, markerB = null, routeLine = null;
+        let coordA = null, coordB = null, routeKm = null;
+
+        // ── WYSZUKIWARKA ─────────────────────────────────────
+        let debounceTimers = {};
+
+        function setupSearch(inputId, sugId, point) {
+            const input = document.getElementById(inputId);
+            const sug = document.getElementById(sugId);
+
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimers[point]);
+                const q = input.value.trim();
+                if (q.length < 3) { sug.innerHTML = ''; sug.style.display = 'none'; return; }
+
+                debounceTimers[point] = setTimeout(async () => {
+                    try {
+                        const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1`, {
+                            headers: { 'Accept-Language': 'pl' }
+                        });
+                        const data = await r.json();
+                        sug.innerHTML = '';
+                        if (!data.length) { sug.style.display = 'none'; return; }
+                        sug.style.display = 'block';
+                        data.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'suggestion-item';
+                            const name = item.address?.city || item.address?.town || item.address?.village || item.name;
+                            const detail = [item.address?.county, item.address?.country].filter(Boolean).join(', ');
+                            div.innerHTML = `<div class="s-name">${name || item.display_name.split(',')[0]}</div><div class="s-detail">${detail}</div>`;
+                            div.addEventListener('click', () => {
+                                input.value = name || item.display_name.split(',')[0];
+                                sug.style.display = 'none';
+                                setPoint(point, parseFloat(item.lat), parseFloat(item.lon), input.value);
+                            });
+                            sug.appendChild(div);
+                        });
+                    } catch (e) { sug.style.display = 'none'; }
+                }, 350);
+            });
+
+            document.addEventListener('click', e => {
+                if (!e.target.closest(`#wrap-${point}`)) sug.style.display = 'none';
+            });
         }
 
-        // Ładowanie statystyk
-        async function loadStats() {
-            try {
-                const r = await fetch(`${API}/stats`);
-                const d = await r.json();
+        function setPoint(point, lat, lon, label) {
+            if (point === 'a') {
+                coordA = [lat, lon];
+                if (markerA) markerA.remove();
+                markerA = L.marker([lat, lon], { icon: iconA }).addTo(map);
+                document.getElementById('label-a').textContent = '✓ ' + label;
+            } else {
+                coordB = [lat, lon];
+                if (markerB) markerB.remove();
+                markerB = L.marker([lat, lon], { icon: iconB }).addTo(map);
+                document.getElementById('label-b').textContent = '✓ ' + label;
+            }
 
-                document.getElementById('stat-mae').textContent = d.mae;
-                document.getElementById('stat-r2').textContent = (d.r2 * 100).toFixed(0) + '%';
-                document.getElementById('stat-samples').textContent = d.training_samples;
-                document.getElementById('stat-features').textContent = d.feature_columns.length;
-
-                // Opisy cech po polsku
-                const featDescriptions = {
-                    displacement: 'Pojemność silnika',
-                    horsepower: 'Moc silnika',
-                    weight: 'Masa pojazdu',
-                    acceleration: 'Przyspieszenie',
-                    cylinders_4: 'Silnik 4-cyl.',
-                    cylinders_6: 'Silnik 6-cyl.',
-                    cylinders_8: 'Silnik 8-cyl.',
-                    origin_1: 'Pojazd USA',
-                    origin_2: 'Pojazd europejski',
-                    origin_3: 'Pojazd azjatycki',
-                };
-
-                const fi = d.feature_importance;
-                const max = Math.max(...Object.values(fi));
-                document.getElementById('feature-bars').innerHTML = Object.entries(fi)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([name, val]) => {
-                        const label = featDescriptions[name] || name.toLowerCase();
-                        const pct = ((val / max) * 100).toFixed(0);
-                        return `
-            <div class="feat-row">
-              <span class="feat-name">${label}</span>
-              <div class="feat-track">
-                <div class="feat-fill" style="width:${pct}%"></div>
-              </div>
-              <span class="feat-pct">${(val * 100).toFixed(1)}%</span>
-            </div>`;
-                    }).join('');
-
-                buildChart();
-            } catch (e) {
-                const b = document.getElementById('model-badge');
-                b.textContent = 'Offline';
-                b.className = 'badge badge-light';
-                b.style.color = '#dc2626';
-                b.style.borderColor = '#dc2626';
+            if (coordA && coordB) {
+                map.fitBounds([coordA, coordB], { padding: [40, 40] });
+                fetchRoute();
+            } else {
+                map.setView([lat, lon], 10);
             }
         }
 
-        // Predykcja
-        async function predict() {
-            const btn = document.getElementById('predict-btn');
+        // ── TRASA OSRM ───────────────────────────────────────
+        async function fetchRoute() {
+            if (!coordA || !coordB) return;
+            try {
+                const url = `https://router.project-osrm.org/route/v1/driving/${coordA[1]},${coordA[0]};${coordB[1]},${coordB[0]}?overview=full&geometries=geojson`;
+                const r = await fetch(url);
+                const data = await r.json();
+
+                if (!data.routes?.length) return;
+
+                const route = data.routes[0];
+                routeKm = (route.distance / 1000).toFixed(1);
+                const mins = Math.round(route.duration / 60);
+                const hours = Math.floor(mins / 60);
+                const minRem = mins % 60;
+                const timeStr = hours > 0 ? `${hours} godz. ${minRem} min` : `${minRem} min`;
+
+                // Rysuj trasę
+                if (routeLine) routeLine.remove();
+                routeLine = L.geoJSON(route.geometry, {
+                    style: { color: '#111', weight: 3, opacity: 0.7 }
+                }).addTo(map);
+
+                map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+
+                document.getElementById('route-dist').textContent = routeKm + ' km';
+                document.getElementById('route-time').textContent = timeStr;
+                document.getElementById('route-info').classList.add('show');
+
+            } catch (e) {
+                console.error('Route error:', e);
+            }
+        }
+
+        function clearRoute() {
+            coordA = coordB = routeKm = null;
+            if (markerA) { markerA.remove(); markerA = null; }
+            if (markerB) { markerB.remove(); markerB = null; }
+            if (routeLine) { routeLine.remove(); routeLine = null; }
+            document.getElementById('search-a').value = '';
+            document.getElementById('search-b').value = '';
+            document.getElementById('label-a').textContent = '';
+            document.getElementById('label-b').textContent = '';
+            document.getElementById('route-info').classList.remove('show');
+            document.getElementById('results').style.display = 'none';
+            map.setView([52.0, 19.5], 6);
+        }
+
+        // ── KALKULACJA ───────────────────────────────────────
+        async function calculate() {
+            if (!routeKm) {
+                alert('Najpierw wybierz punkt startowy i docelowy na mapie.');
+                return;
+            }
+
+            const btn = document.getElementById('calc-btn');
             btn.disabled = true;
             btn.textContent = 'Obliczanie...';
-
-            // Pobierz wartości metryczne z formularza
-            const disp_cm3 = +document.getElementById('inp-displacement').value;
-            const hp_kw = +document.getElementById('inp-horsepower').value;
-            const weight_kg = +document.getElementById('inp-weight').value;
-            const imp = toImperial(disp_cm3, hp_kw, weight_kg);
-
-            const dist = +document.getElementById('inp-distance').value;
 
             try {
                 const r = await fetch(`${API}/predict`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        displacement: imp.displacement,
-                        horsepower: imp.horsepower,
-                        weight: imp.weight,
-                        acceleration: +document.getElementById('inp-acceleration').value,
+                        engine_size: +document.getElementById('inp-engine').value,
                         cylinders: +document.getElementById('inp-cylinders').value,
-                        origin: +document.getElementById('inp-origin').value,
-                        model_year: 76,
+                        vehicle_class: document.getElementById('inp-class').value,
+                        fuel_type: document.getElementById('inp-fuel').value,
+                        distance: parseFloat(routeKm),
                     })
                 });
                 const d = await r.json();
 
-                document.getElementById('idle-state').style.display = 'none';
-                document.getElementById('result-panel').style.display = 'block';
+                const price = +document.getElementById('inp-price').value;
+                const cost = (d.total_liters * price).toFixed(2);
+                const fuelType = document.getElementById('inp-fuel').value;
+                const fuelLabel = fuelType === 'D' ? 'diesel' : 'benzyna';
 
+                document.getElementById('results').style.display = 'block';
                 document.getElementById('res-l100').textContent = d.l_per_100km;
-                document.getElementById('res-mpg').textContent = d.mpg;
-
-                const total = ((d.l_per_100km / 100) * dist).toFixed(1);
-                document.getElementById('res-total').textContent = total + ' L';
-                document.getElementById('res-cans').textContent = Math.ceil(total / 20);
+                document.getElementById('res-total').textContent = d.total_liters + ' L';
+                document.getElementById('res-cost').textContent = cost + ' zł';
+                document.getElementById('res-dist').textContent = routeKm;
+                document.getElementById('res-note').textContent =
+                    `Szacowane spalanie dla wybranej klasy pojazdu (${fuelLabel}). Rzeczywiste zużycie może się różnić w zależności od stylu jazdy i warunków trasy.`;
 
                 const ratings = [
-                    { max: 7, label: 'Doskonałe', color: '#16a34a', pct: 12 },
-                    { max: 10, label: 'Dobre', color: '#65a30d', pct: 30 },
-                    { max: 14, label: 'Umiarkowane', color: '#d97706', pct: 55 },
-                    { max: 18, label: 'Wysokie', color: '#ea580c', pct: 76 },
-                    { max: 99, label: 'Krytyczne', color: '#dc2626', pct: 94 },
+                    { max: 6, label: 'Doskonałe', color: '#16a34a', pct: 10 },
+                    { max: 8, label: 'Dobre', color: '#65a30d', pct: 28 },
+                    { max: 11, label: 'Umiarkowane', color: '#d97706', pct: 52 },
+                    { max: 15, label: 'Wysokie', color: '#ea580c', pct: 75 },
+                    { max: 99, label: 'Krytyczne', color: '#dc2626', pct: 93 },
                 ];
                 const rating = ratings.find(rt => d.l_per_100km < rt.max);
                 document.getElementById('rating-label').textContent = rating.label;
@@ -894,77 +955,29 @@
                 bar.style.width = rating.pct + '%';
                 bar.style.background = rating.color;
 
+                // Scroll do wyników
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
             } catch (e) {
-                alert('Nie można połączyć się z API. Upewnij się że app.py działa.');
+                alert('Błąd połączenia z API.');
             }
 
             btn.disabled = false;
-            btn.textContent = 'Oblicz zapotrzebowanie na paliwo';
+            btn.textContent = 'Oblicz zużycie';
         }
 
-        // Wykres
-        function buildChart() {
-            const labels = ['Lekki zwiad', 'Patrol', 'Transporter', 'Ciężarówka', 'Ciężki trans.'];
-            const weights = [800, 1400, 2200, 3200, 4200]; // kg
-            const values = weights.map((w, i) => {
-                const lbs = w / 0.4536;
-                const mpg = Math.max(42 - lbs / 280 - i * 2.5, 7);
-                return +(235.214 / mpg).toFixed(1);
-            });
+        // ── INIT ─────────────────────────────────────────────
+        setupSearch('search-a', 'sug-a', 'a');
+        setupSearch('search-b', 'sug-b', 'b');
 
-            new Chart(document.getElementById('fleet-chart'), {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: values.map(v =>
-                            v < 10 ? 'rgba(22,163,74,0.12)' :
-                                v < 15 ? 'rgba(217,119,6,0.12)' :
-                                    'rgba(220,38,38,0.12)'
-                        ),
-                        borderColor: values.map(v =>
-                            v < 10 ? 'rgba(22,163,74,0.6)' :
-                                v < 15 ? 'rgba(217,119,6,0.6)' :
-                                    'rgba(220,38,38,0.6)'
-                        ),
-                        borderWidth: 1,
-                        borderRadius: 4,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#fff',
-                            borderColor: '#e8e8e4',
-                            borderWidth: 1,
-                            titleColor: '#111',
-                            bodyColor: '#888',
-                            titleFont: { family: 'DM Sans', size: 13 },
-                            bodyFont: { family: 'DM Mono', size: 12 },
-                            callbacks: { label: ctx => ` ${ctx.raw} L/100km` }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: '#8a8a84', font: { family: 'DM Sans', size: 11 } },
-                            grid: { display: false },
-                            border: { display: false }
-                        },
-                        y: {
-                            ticks: { color: '#8a8a84', font: { family: 'DM Mono', size: 11 } },
-                            grid: { color: '#f0f0ee' },
-                            border: { display: false }
-                        }
-                    }
-                }
+        // Sprawdź status modelu
+        fetch(`${API}/stats`)
+            .catch(() => {
+                const b = document.getElementById('model-badge');
+                b.textContent = 'Offline';
+                b.className = 'badge badge-dim';
+                b.style.color = '#dc2626';
             });
-        }
-
-        loadStats();
     </script>
 </body>
 
