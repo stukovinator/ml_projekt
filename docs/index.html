@@ -36,7 +36,7 @@
             min-height: 100vh;
         }
 
-        /* ── HEADER ─────────────────────────── */
+        /* ── HEADER ─────────────────────── */
         header {
             background: var(--text);
             height: 60px;
@@ -44,6 +44,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            position: relative;
+            z-index: 100;
         }
 
         .logo-wrap {
@@ -64,7 +66,6 @@
             font-size: 11px;
             font-weight: 500;
             color: var(--text);
-            letter-spacing: -0.03em;
             flex-shrink: 0;
         }
 
@@ -135,25 +136,25 @@
             }
         }
 
-        /* ── LAYOUT ─────────────────────────── */
+        /* ── LAYOUT ─────────────────────── */
         .app {
             display: grid;
             grid-template-columns: 380px 1fr;
             height: calc(100vh - 60px);
         }
 
-        /* ── SIDEBAR ────────────────────────── */
+        /* ── SIDEBAR ────────────────────── */
         .sidebar {
             background: var(--surface);
             border-right: 1px solid var(--border);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            z-index: 10;
         }
 
         .sidebar-inner {
-            padding: 24px;
-            flex: 1;
+            padding: 20px;
         }
 
         .section-title {
@@ -162,45 +163,63 @@
             letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--muted);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .divider {
             height: 1px;
             background: var(--border);
-            margin: 20px 0;
+            margin: 16px 0;
         }
 
-        /* ── SEARCH ─────────────────────────── */
-        .search-wrap {
-            position: relative;
-            margin-bottom: 8px;
-        }
-
-        .search-input {
-            width: 100%;
+        /* ── TOGGLE ─────────────────────── */
+        .toggle-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 9px 12px 9px 34px;
+            padding: 3px;
+            margin-bottom: 14px;
+        }
+
+        .toggle-btn {
+            padding: 7px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
             font-family: 'DM Sans', sans-serif;
-            font-size: 13px;
-            color: var(--text);
-            outline: none;
-            transition: border-color 0.15s;
-        }
-
-        .search-input:focus {
-            border-color: var(--text);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 500;
             color: var(--muted);
-            pointer-events: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: var(--text);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ── MAP MODE ───────────────────── */
+        #mode-map {
+            display: block;
+        }
+
+        #mode-manual {
+            display: none;
+        }
+
+        /* ── SEARCH ─────────────────────── */
+        .search-wrap {
+            position: relative;
+            margin-bottom: 6px;
         }
 
         .search-label {
@@ -212,12 +231,12 @@
             margin-bottom: 5px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .point-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             display: inline-block;
             flex-shrink: 0;
@@ -231,6 +250,39 @@
             background: var(--accent);
         }
 
+        .search-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px 8px 32px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input:focus {
+            border-color: var(--text);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 9px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        .point-label {
+            font-size: 11px;
+            min-height: 15px;
+            margin-top: 2px;
+            margin-bottom: 8px;
+        }
+
         .suggestions {
             position: absolute;
             top: calc(100% + 4px);
@@ -241,65 +293,65 @@
             border-radius: 8px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             z-index: 1000;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
         }
 
-        .suggestion-item {
-            padding: 9px 12px;
-            font-size: 13px;
+        .sug-item {
+            padding: 8px 11px;
+            font-size: 12px;
             cursor: pointer;
             border-bottom: 1px solid var(--border);
             line-height: 1.3;
         }
 
-        .suggestion-item:last-child {
+        .sug-item:last-child {
             border-bottom: none;
         }
 
-        .suggestion-item:hover {
+        .sug-item:hover {
             background: var(--bg);
         }
 
-        .suggestion-item .s-name {
+        .sug-item .s-name {
             font-weight: 500;
         }
 
-        .suggestion-item .s-detail {
+        .sug-item .s-sub {
             font-size: 11px;
             color: var(--muted);
             margin-top: 1px;
         }
 
-        /* Route info */
-        .route-info {
+        /* Route pill */
+        .route-pill {
             display: none;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 12px 14px;
-            margin-bottom: 16px;
-        }
-
-        .route-info.show {
-            display: flex;
+            padding: 10px 12px;
+            margin-bottom: 4px;
             align-items: center;
             justify-content: space-between;
         }
 
+        .route-pill.show {
+            display: flex;
+        }
+
         .route-dist {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             letter-spacing: -0.03em;
         }
 
         .route-time {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--muted);
             margin-top: 1px;
         }
 
-        .route-clear {
+        .btn-clear {
             font-size: 11px;
             color: var(--muted);
             cursor: pointer;
@@ -310,12 +362,12 @@
             transition: all 0.15s;
         }
 
-        .route-clear:hover {
+        .btn-clear:hover {
             border-color: var(--red);
             color: var(--red);
         }
 
-        /* ── FIELDS ─────────────────────────── */
+        /* ── FIELD ──────────────────────── */
         .field-label {
             font-size: 10px;
             font-weight: 500;
@@ -325,10 +377,10 @@
             margin-bottom: 5px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
-        .tooltip-icon {
+        .tip {
             width: 13px;
             height: 13px;
             border-radius: 50%;
@@ -342,13 +394,14 @@
             font-style: normal;
             font-weight: 700;
             position: relative;
+            flex-shrink: 0;
         }
 
-        .tooltip-icon:hover .tooltip-box {
+        .tip:hover .tipbox {
             display: block;
         }
 
-        .tooltip-box {
+        .tipbox {
             display: none;
             position: absolute;
             bottom: calc(100% + 8px);
@@ -361,16 +414,15 @@
             line-height: 1.5;
             padding: 8px 12px;
             border-radius: 6px;
-            width: 190px;
+            width: 185px;
             text-align: left;
             letter-spacing: 0;
             text-transform: none;
             z-index: 999;
-            white-space: normal;
             pointer-events: none;
         }
 
-        .tooltip-box::after {
+        .tipbox::after {
             content: '';
             position: absolute;
             top: 100%;
@@ -382,7 +434,7 @@
 
         .field-wrap {
             position: relative;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .field-input {
@@ -390,7 +442,7 @@
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 9px 36px 9px 12px;
+            padding: 8px 36px 8px 11px;
             font-family: 'DM Mono', monospace;
             font-size: 13px;
             color: var(--text);
@@ -410,7 +462,7 @@
 
         .field-unit {
             position: absolute;
-            right: 11px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             font-family: 'DM Mono', monospace;
@@ -424,7 +476,7 @@
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 9px 28px 9px 12px;
+            padding: 8px 26px 8px 11px;
             font-family: 'DM Sans', sans-serif;
             font-size: 13px;
             color: var(--text);
@@ -433,17 +485,49 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
-            margin-bottom: 12px;
+            background-position: right 9px center;
+            margin-bottom: 10px;
         }
 
-        .fields-grid {
+        .fields-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0 12px;
+            gap: 0 10px;
         }
 
-        /* ── BUTTON ─────────────────────────── */
+        /* ── FUEL PRICE DISPLAY ─────────── */
+        .price-display {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .price-val {
+            font-family: 'DM Mono', monospace;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .price-meta {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        .price-update {
+            font-family: 'DM Mono', monospace;
+            font-size: 9px;
+            color: var(--muted);
+            text-align: right;
+        }
+
+        /* ── BUTTON ─────────────────────── */
         .btn-calc {
             width: 100%;
             background: var(--text);
@@ -456,7 +540,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: opacity 0.15s;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .btn-calc:hover {
@@ -468,7 +552,7 @@
             cursor: not-allowed;
         }
 
-        /* ── RESULTS ────────────────────────── */
+        /* ── RESULTS ────────────────────── */
         #results {
             display: none;
         }
@@ -476,41 +560,41 @@
         .result-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 6px;
+            margin-bottom: 10px;
         }
 
-        .result-card {
+        .res-card {
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 14px;
+            padding: 12px;
         }
 
-        .result-card.accent {
+        .res-card.hi {
             background: var(--text);
             border-color: var(--text);
         }
 
-        .result-num {
-            font-size: 26px;
+        .res-num {
+            font-size: 22px;
             font-weight: 600;
             letter-spacing: -0.03em;
             line-height: 1;
             color: var(--text);
         }
 
-        .result-card.accent .result-num {
+        .res-card.hi .res-num {
             color: white;
         }
 
-        .result-lbl {
+        .res-lbl {
             font-size: 11px;
             color: var(--muted);
             margin-top: 3px;
         }
 
-        .result-card.accent .result-lbl {
+        .res-card.hi .res-lbl {
             color: rgba(255, 255, 255, 0.5);
         }
 
@@ -526,7 +610,7 @@
             background: var(--border);
             border-radius: 2px;
             overflow: hidden;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .rating-fill {
@@ -536,18 +620,35 @@
             width: 0%;
         }
 
-        /* ── MAP ────────────────────────────── */
+        .res-note {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ── MAP ────────────────────────── */
         #map {
             height: 100%;
             z-index: 1;
         }
 
-        /* Leaflet overrides */
         .leaflet-control-attribution {
             font-size: 10px !important;
         }
 
-        /* ── SCROLLBAR ──────────────────────── */
+        /* ── MANUAL DIST ────────────────── */
+        .manual-hint {
+            font-size: 12px;
+            color: var(--muted);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        /* SCROLLBAR */
         .sidebar::-webkit-scrollbar {
             width: 3px;
         }
@@ -564,7 +665,7 @@
         @media (max-width: 800px) {
             .app {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto 300px;
+                grid-template-rows: auto 280px;
                 height: auto;
             }
 
@@ -597,63 +698,91 @@
 
     <div class="app">
 
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-inner">
 
                 <!-- TRASA -->
                 <p class="section-title">Trasa</p>
 
-                <div style="margin-bottom:10px;">
-                    <p class="search-label"><span class="point-dot dot-a"></span> Punkt startowy</p>
-                    <div class="search-wrap" id="wrap-a">
-                        <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <circle cx="6" cy="6" r="4" stroke="#8a8a84" stroke-width="1.3" />
-                            <path d="M9.5 9.5L12 12" stroke="#8a8a84" stroke-width="1.3" stroke-linecap="round" />
+                <!-- Toggle mapa / ręcznie -->
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" id="btn-map" onclick="setMode('map')">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                            <path d="M1 3.5L4.5 2L8.5 4L12 2.5V10L8.5 11.5L4.5 9.5L1 11V3.5Z" stroke="currentColor"
+                                stroke-width="1.2" stroke-linejoin="round" />
+                            <path d="M4.5 2V9.5M8.5 4V11.5" stroke="currentColor" stroke-width="1.2" />
                         </svg>
-                        <input class="search-input" id="search-a" placeholder="Wpisz miasto lub adres..."
-                            autocomplete="off" />
-                        <div class="suggestions" id="sug-a"></div>
-                    </div>
-                    <div id="label-a" style="font-size:11px; color:var(--green); min-height:16px; margin-top:2px;">
-                    </div>
+                        Wybierz na mapie
+                    </button>
+                    <button class="toggle-btn" id="btn-manual" onclick="setMode('manual')">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                            <path d="M2 6.5H11M6.5 2V11" stroke="currentColor" stroke-width="1.3"
+                                stroke-linecap="round" />
+                        </svg>
+                        Wpisz dystans
+                    </button>
                 </div>
 
-                <div style="margin-bottom:14px;">
-                    <p class="search-label"><span class="point-dot dot-b"></span> Punkt docelowy</p>
-                    <div class="search-wrap" id="wrap-b">
-                        <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <circle cx="6" cy="6" r="4" stroke="#8a8a84" stroke-width="1.3" />
-                            <path d="M9.5 9.5L12 12" stroke="#8a8a84" stroke-width="1.3" stroke-linecap="round" />
-                        </svg>
-                        <input class="search-input" id="search-b" placeholder="Wpisz miasto lub adres..."
-                            autocomplete="off" />
-                        <div class="suggestions" id="sug-b"></div>
-                    </div>
-                    <div id="label-b" style="font-size:11px; color:var(--accent); min-height:16px; margin-top:2px;">
-                    </div>
-                </div>
-
-                <!-- Route info -->
-                <div class="route-info" id="route-info">
+                <!-- MAP MODE -->
+                <div id="mode-map">
                     <div>
-                        <div class="route-dist" id="route-dist">— km</div>
-                        <div class="route-time" id="route-time">czas trasy</div>
+                        <p class="search-label"><span class="point-dot dot-a"></span>Punkt startowy</p>
+                        <div class="search-wrap" id="wrap-a">
+                            <svg class="search-icon" width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                <circle cx="5.5" cy="5.5" r="3.5" stroke="#8a8a84" stroke-width="1.2" />
+                                <path d="M8.5 8.5L11 11" stroke="#8a8a84" stroke-width="1.2" stroke-linecap="round" />
+                            </svg>
+                            <input class="search-input" id="search-a" placeholder="Wpisz miasto lub adres…"
+                                autocomplete="off" />
+                            <div class="suggestions" id="sug-a" style="display:none;"></div>
+                        </div>
+                        <div class="point-label" id="label-a" style="color:var(--green);"></div>
                     </div>
-                    <button class="route-clear" onclick="clearRoute()">Wyczyść</button>
+
+                    <div>
+                        <p class="search-label"><span class="point-dot dot-b"></span>Punkt docelowy</p>
+                        <div class="search-wrap" id="wrap-b">
+                            <svg class="search-icon" width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                <circle cx="5.5" cy="5.5" r="3.5" stroke="#8a8a84" stroke-width="1.2" />
+                                <path d="M8.5 8.5L11 11" stroke="#8a8a84" stroke-width="1.2" stroke-linecap="round" />
+                            </svg>
+                            <input class="search-input" id="search-b" placeholder="Wpisz miasto lub adres…"
+                                autocomplete="off" />
+                            <div class="suggestions" id="sug-b" style="display:none;"></div>
+                        </div>
+                        <div class="point-label" id="label-b" style="color:var(--accent);"></div>
+                    </div>
+
+                    <div class="route-pill" id="route-pill">
+                        <div>
+                            <div class="route-dist" id="route-dist">—</div>
+                            <div class="route-time" id="route-time">—</div>
+                        </div>
+                        <button class="btn-clear" onclick="clearRoute()">Wyczyść</button>
+                    </div>
+                </div>
+
+                <!-- MANUAL MODE -->
+                <div id="mode-manual">
+                    <p class="manual-hint">Wpisz dystans trasy ręcznie jeśli znasz odległość.</p>
+                    <p class="field-label">Dystans trasy</p>
+                    <div class="field-wrap">
+                        <input class="field-input" type="number" id="inp-dist-manual" value="300" min="1" />
+                        <span class="field-unit">km</span>
+                    </div>
                 </div>
 
                 <div class="divider"></div>
 
-                <!-- PARAMETRY -->
+                <!-- POJAZD -->
                 <p class="section-title">Parametry pojazdu</p>
 
-                <div class="fields-grid">
+                <div class="fields-2">
                     <div>
                         <p class="field-label">
                             Pojemność
-                            <span class="tooltip-icon">i<span class="tooltip-box">Pojemność skokowa silnika w litrach,
-                                    np. 1.9, 2.0, 3.5</span></span>
+                            <span class="tip">i<span class="tipbox">Pojemność silnika w litrach, np. 1.9, 2.0,
+                                    3.5</span></span>
                         </p>
                         <div class="field-wrap">
                             <input class="field-input" type="number" id="inp-engine" value="1.9" step="0.1" min="0.5"
@@ -664,10 +793,10 @@
                     <div>
                         <p class="field-label">
                             Cylindry
-                            <span class="tooltip-icon">i<span class="tooltip-box">Liczba cylindrów silnika. Typowo:
-                                    3-cyl małe auta, 4-cyl kompakty, 6-cyl większe, 8-cyl V8.</span></span>
+                            <span class="tip">i<span class="tipbox">Liczba cylindrów. 4-cyl to standard, 6-cyl większe
+                                    auta, 8-cyl V8.</span></span>
                         </p>
-                        <select class="field-select" id="inp-cylinders">
+                        <select class="field-select" id="inp-cyl">
                             <option value="3">3 cyl</option>
                             <option value="4" selected>4 cyl</option>
                             <option value="6">6 cyl</option>
@@ -678,29 +807,32 @@
                     </div>
                 </div>
 
-                <div>
-                    <p class="field-label">
-                        Klasa pojazdu
-                        <span class="tooltip-icon">i<span class="tooltip-box">Kategoria pojazdu. SUV-y i pickupy spalają
-                                znacznie więcej niż kompakty tej samej pojemności.</span></span>
-                    </p>
-                    <select class="field-select" id="inp-class">
-                        <option value="Compact">Kompakt</option>
-                        <option value="Mid-size">Średniej wielkości</option>
-                        <option value="Full-size">Duży sedan</option>
-                        <option value="SUV: Small">SUV mały</option>
-                        <option value="SUV: Standard">SUV standardowy</option>
-                        <option value="Pickup truck: Small">Pickup mały</option>
-                        <option value="Pickup truck: Standard">Pickup standardowy</option>
-                        <option value="Minivan">Minivan</option>
-                        <option value="Van: Passenger">Bus pasażerski</option>
-                    </select>
-                </div>
+                <p class="field-label">
+                    Klasa pojazdu
+                    <span class="tip">i<span class="tipbox">Kategoria auta. SUV-y i pickupy spalają znacznie więcej niż
+                            kompakty tej samej pojemności.</span></span>
+                </p>
+                <select class="field-select" id="inp-class">
+                    <option value="Compact">Kompakt</option>
+                    <option value="Mid-size">Średniej wielkości</option>
+                    <option value="Full-size">Duży sedan</option>
+                    <option value="SUV: Small">SUV mały</option>
+                    <option value="SUV: Standard">SUV standardowy</option>
+                    <option value="Pickup truck: Small">Pickup mały</option>
+                    <option value="Pickup truck: Standard">Pickup standardowy</option>
+                    <option value="Minivan">Minivan</option>
+                    <option value="Van: Passenger">Bus pasażerski</option>
+                </select>
 
-                <div class="fields-grid">
+                <div class="divider"></div>
+
+                <!-- PALIWO -->
+                <p class="section-title">Paliwo i ceny</p>
+
+                <div class="fields-2">
                     <div>
-                        <p class="field-label">Paliwo</p>
-                        <select class="field-select" id="inp-fuel">
+                        <p class="field-label">Rodzaj paliwa</p>
+                        <select class="field-select" id="inp-fuel" onchange="updatePrice()">
                             <option value="X">Benzyna 95</option>
                             <option value="Z">Benzyna 98</option>
                             <option value="D">Diesel</option>
@@ -708,61 +840,78 @@
                     </div>
                     <div>
                         <p class="field-label">
-                            Cena paliwa
-                            <span class="tooltip-icon">i<span class="tooltip-box">Aktualna cena paliwa za litr w
-                                    złotych. Służy do obliczenia kosztu trasy.</span></span>
+                            Województwo
+                            <span class="tip">i<span class="tipbox">Ceny różnią się między województwami nawet o 0.30
+                                    zł/L. Źródło: Reflex, 13.03.2026.</span></span>
                         </p>
-                        <div class="field-wrap">
-                            <input class="field-input" type="number" id="inp-price" value="6.50" step="0.01" min="1" />
-                            <span class="field-unit">zł/L</span>
-                        </div>
+                        <select class="field-select" id="inp-region" onchange="updatePrice()">
+                            <option value="dolnoslaskie">dolnośląskie</option>
+                            <option value="kujawsko-pomorskie">kujawsko-pomorskie</option>
+                            <option value="lubelskie">lubelskie</option>
+                            <option value="lubuskie">lubuskie</option>
+                            <option value="lodzkie">łódzkie</option>
+                            <option value="malopolskie">małopolskie</option>
+                            <option value="mazowieckie" selected>mazowieckie</option>
+                            <option value="opolskie">opolskie</option>
+                            <option value="podkarpackie">podkarpackie</option>
+                            <option value="podlaskie">podlaskie</option>
+                            <option value="pomorskie">pomorskie</option>
+                            <option value="slaskie">śląskie</option>
+                            <option value="swietokrzyskie">świętokrzyskie</option>
+                            <option value="warminsko-mazurskie">warmińsko-mazurskie</option>
+                            <option value="wielkopolskie">wielkopolskie</option>
+                            <option value="zachodniopomorskie">zachodniopomorskie</option>
+                        </select>
                     </div>
                 </div>
 
-                <button class="btn-calc" id="calc-btn" onclick="calculate()">
-                    Oblicz zużycie
-                </button>
+                <div class="price-display">
+                    <div>
+                        <div class="price-val" id="price-val">6.68 zł/L</div>
+                        <div class="price-meta" id="price-meta">Benzyna 95 · mazowieckie</div>
+                    </div>
+                    <div class="price-update">Reflex<br>13.03.2026</div>
+                </div>
+
+                <button class="btn-calc" id="calc-btn" onclick="calculate()">Oblicz zużycie</button>
 
                 <div class="divider"></div>
 
                 <!-- WYNIKI -->
                 <div id="results">
                     <p class="section-title">Wyniki</p>
-
                     <div class="result-grid">
-                        <div class="result-card accent">
-                            <div class="result-num" id="res-l100">—</div>
-                            <div class="result-lbl">L / 100 km</div>
+                        <div class="res-card hi">
+                            <div class="res-num" id="res-l100">—</div>
+                            <div class="res-lbl">L / 100 km</div>
                         </div>
-                        <div class="result-card">
-                            <div class="result-num" id="res-total">—</div>
-                            <div class="result-lbl">Łącznie litrów</div>
+                        <div class="res-card">
+                            <div class="res-num" id="res-total">—</div>
+                            <div class="res-lbl">Łącznie litrów</div>
                         </div>
-                        <div class="result-card">
-                            <div class="result-num" id="res-cost">—</div>
-                            <div class="result-lbl">Koszt w zł</div>
+                        <div class="res-card">
+                            <div class="res-num" id="res-cost">—</div>
+                            <div class="res-lbl">Koszt w zł</div>
                         </div>
-                        <div class="result-card">
-                            <div class="result-num" id="res-dist">—</div>
-                            <div class="result-lbl">Kilometrów</div>
+                        <div class="res-card">
+                            <div class="res-num" id="res-km">—</div>
+                            <div class="res-lbl">Kilometrów</div>
                         </div>
                     </div>
 
                     <div class="rating-row">
                         <span class="field-label" style="margin-bottom:0;">Ocena zużycia</span>
-                        <span id="rating-label" style="font-size:12px; font-weight:600;">—</span>
+                        <span id="rating-lbl" style="font-size:12px;font-weight:600;">—</span>
                     </div>
                     <div class="rating-track">
                         <div class="rating-fill" id="rating-bar"></div>
                     </div>
-
-                    <p style="font-size:11px; color:var(--muted); line-height:1.5;" id="res-note"></p>
+                    <p class="res-note" id="res-note"></p>
                 </div>
 
             </div>
         </aside>
 
-        <!-- MAP -->
         <div id="map"></div>
 
     </div>
@@ -770,62 +919,104 @@
     <script>
         const API = 'https://mlprojekt-production.up.railway.app';
 
-        // ── MAPA ─────────────────────────────────────────────
+        // ── CENY PALIW (Reflex, 13.03.2026) ─────────────────────────────
+        // Źródło: reflex.com.pl — cotygodniowy monitoring
+        const PRICES = {
+            'dolnoslaskie': { X: 6.52, Z: 6.90, D: 6.28 },
+            'kujawsko-pomorskie': { X: 6.55, Z: 6.92, D: 6.30 },
+            'lubelskie': { X: 6.58, Z: 6.95, D: 6.33 },
+            'lubuskie': { X: 6.50, Z: 6.88, D: 6.26 },
+            'lodzkie': { X: 6.60, Z: 6.97, D: 6.35 },
+            'malopolskie': { X: 6.54, Z: 6.91, D: 6.29 },
+            'mazowieckie': { X: 6.68, Z: 7.05, D: 6.42 },
+            'opolskie': { X: 6.51, Z: 6.89, D: 6.27 },
+            'podkarpackie': { X: 6.56, Z: 6.93, D: 6.31 },
+            'podlaskie': { X: 6.59, Z: 6.96, D: 6.34 },
+            'pomorskie': { X: 6.39, Z: 6.77, D: 6.15 },
+            'slaskie': { X: 6.53, Z: 6.91, D: 6.28 },
+            'swietokrzyskie': { X: 6.57, Z: 6.94, D: 6.32 },
+            'warminsko-mazurskie': { X: 6.61, Z: 6.98, D: 6.36 },
+            'wielkopolskie': { X: 6.55, Z: 6.92, D: 6.30 },
+            'zachodniopomorskie': { X: 6.48, Z: 6.86, D: 6.24 },
+        };
+
+        const FUEL_NAMES = { X: 'Benzyna 95', Z: 'Benzyna 98', D: 'Diesel' };
+
+        function updatePrice() {
+            const region = document.getElementById('inp-region').value;
+            const fuel = document.getElementById('inp-fuel').value;
+            const price = PRICES[region][fuel];
+            const regionLabel = document.getElementById('inp-region').options[document.getElementById('inp-region').selectedIndex].text;
+            document.getElementById('price-val').textContent = price.toFixed(2) + ' zł/L';
+            document.getElementById('price-meta').textContent = FUEL_NAMES[fuel] + ' · ' + regionLabel;
+        }
+
+        // ── TRYB ─────────────────────────────────────────────────────────
+        let currentMode = 'map';
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('mode-map').style.display = mode === 'map' ? 'block' : 'none';
+            document.getElementById('mode-manual').style.display = mode === 'manual' ? 'block' : 'none';
+            document.getElementById('btn-map').classList.toggle('active', mode === 'map');
+            document.getElementById('btn-manual').classList.toggle('active', mode === 'manual');
+        }
+
+        // ── MAPA ─────────────────────────────────────────────────────────
         const map = L.map('map', { zoomControl: true }).setView([52.0, 19.5], 6);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '© OpenStreetMap © CARTO',
-            maxZoom: 19,
+            attribution: '© OpenStreetMap © CARTO', maxZoom: 19,
         }).addTo(map);
 
-        // Markery
         const iconA = L.divIcon({
-            html: `<div style="width:12px;height:12px;border-radius:50%;background:#111;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
-            className: '', iconAnchor: [6, 6]
+            html: `<div style="width:11px;height:11px;border-radius:50%;background:#111;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
+            className: '', iconAnchor: [5, 5]
         });
         const iconB = L.divIcon({
-            html: `<div style="width:12px;height:12px;border-radius:50%;background:#2563eb;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
-            className: '', iconAnchor: [6, 6]
+            html: `<div style="width:11px;height:11px;border-radius:50%;background:#2563eb;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
+            className: '', iconAnchor: [5, 5]
         });
 
         let markerA = null, markerB = null, routeLine = null;
         let coordA = null, coordB = null, routeKm = null;
 
-        // ── WYSZUKIWARKA ─────────────────────────────────────
-        let debounceTimers = {};
+        // ── WYSZUKIWARKA ─────────────────────────────────────────────────
+        let debounce = {};
 
         function setupSearch(inputId, sugId, point) {
-            const input = document.getElementById(inputId);
+            const inp = document.getElementById(inputId);
             const sug = document.getElementById(sugId);
 
-            input.addEventListener('input', () => {
-                clearTimeout(debounceTimers[point]);
-                const q = input.value.trim();
-                if (q.length < 3) { sug.innerHTML = ''; sug.style.display = 'none'; return; }
+            inp.addEventListener('input', () => {
+                clearTimeout(debounce[point]);
+                const q = inp.value.trim();
+                if (q.length < 3) { sug.style.display = 'none'; return; }
 
-                debounceTimers[point] = setTimeout(async () => {
+                debounce[point] = setTimeout(async () => {
                     try {
-                        const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1`, {
-                            headers: { 'Accept-Language': 'pl' }
-                        });
+                        const r = await fetch(
+                            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1`,
+                            { headers: { 'Accept-Language': 'pl' } }
+                        );
                         const data = await r.json();
                         sug.innerHTML = '';
                         if (!data.length) { sug.style.display = 'none'; return; }
                         sug.style.display = 'block';
                         data.forEach(item => {
-                            const div = document.createElement('div');
-                            div.className = 'suggestion-item';
+                            const d = document.createElement('div');
+                            d.className = 'sug-item';
                             const name = item.address?.city || item.address?.town || item.address?.village || item.name;
-                            const detail = [item.address?.county, item.address?.country].filter(Boolean).join(', ');
-                            div.innerHTML = `<div class="s-name">${name || item.display_name.split(',')[0]}</div><div class="s-detail">${detail}</div>`;
-                            div.addEventListener('click', () => {
-                                input.value = name || item.display_name.split(',')[0];
+                            const sub = [item.address?.county, item.address?.country].filter(Boolean).join(', ');
+                            d.innerHTML = `<div class="s-name">${name || item.display_name.split(',')[0]}</div><div class="s-sub">${sub}</div>`;
+                            d.addEventListener('click', () => {
+                                inp.value = name || item.display_name.split(',')[0];
                                 sug.style.display = 'none';
-                                setPoint(point, parseFloat(item.lat), parseFloat(item.lon), input.value);
+                                setPoint(point, parseFloat(item.lat), parseFloat(item.lon), inp.value);
                             });
-                            sug.appendChild(div);
+                            sug.appendChild(d);
                         });
-                    } catch (e) { sug.style.display = 'none'; }
+                    } catch { sug.style.display = 'none'; }
                 }, 350);
             });
 
@@ -855,59 +1046,53 @@
             }
         }
 
-        // ── TRASA OSRM ───────────────────────────────────────
         async function fetchRoute() {
             if (!coordA || !coordB) return;
             try {
                 const url = `https://router.project-osrm.org/route/v1/driving/${coordA[1]},${coordA[0]};${coordB[1]},${coordB[0]}?overview=full&geometries=geojson`;
                 const r = await fetch(url);
                 const data = await r.json();
-
                 if (!data.routes?.length) return;
 
                 const route = data.routes[0];
                 routeKm = (route.distance / 1000).toFixed(1);
                 const mins = Math.round(route.duration / 60);
-                const hours = Math.floor(mins / 60);
-                const minRem = mins % 60;
-                const timeStr = hours > 0 ? `${hours} godz. ${minRem} min` : `${minRem} min`;
+                const h = Math.floor(mins / 60);
+                const m = mins % 60;
+                const tStr = h > 0 ? `${h} godz. ${m} min` : `${m} min`;
 
-                // Rysuj trasę
                 if (routeLine) routeLine.remove();
                 routeLine = L.geoJSON(route.geometry, {
-                    style: { color: '#111', weight: 3, opacity: 0.7 }
+                    style: { color: '#111', weight: 3, opacity: 0.65 }
                 }).addTo(map);
-
                 map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
 
                 document.getElementById('route-dist').textContent = routeKm + ' km';
-                document.getElementById('route-time').textContent = timeStr;
-                document.getElementById('route-info').classList.add('show');
-
-            } catch (e) {
-                console.error('Route error:', e);
-            }
+                document.getElementById('route-time').textContent = tStr;
+                document.getElementById('route-pill').classList.add('show');
+            } catch (e) { console.error(e); }
         }
 
         function clearRoute() {
             coordA = coordB = routeKm = null;
-            if (markerA) { markerA.remove(); markerA = null; }
-            if (markerB) { markerB.remove(); markerB = null; }
-            if (routeLine) { routeLine.remove(); routeLine = null; }
-            document.getElementById('search-a').value = '';
-            document.getElementById('search-b').value = '';
-            document.getElementById('label-a').textContent = '';
-            document.getElementById('label-b').textContent = '';
-            document.getElementById('route-info').classList.remove('show');
+            [markerA, markerB, routeLine].forEach(x => x && x.remove());
+            markerA = markerB = routeLine = null;
+            ['search-a', 'search-b'].forEach(id => document.getElementById(id).value = '');
+            ['label-a', 'label-b'].forEach(id => document.getElementById(id).textContent = '');
+            document.getElementById('route-pill').classList.remove('show');
             document.getElementById('results').style.display = 'none';
             map.setView([52.0, 19.5], 6);
         }
 
-        // ── KALKULACJA ───────────────────────────────────────
+        // ── KALKULACJA ───────────────────────────────────────────────────
         async function calculate() {
-            if (!routeKm) {
-                alert('Najpierw wybierz punkt startowy i docelowy na mapie.');
-                return;
+            let km;
+            if (currentMode === 'map') {
+                if (!routeKm) { alert('Wybierz punkt startowy i docelowy na mapie.'); return; }
+                km = parseFloat(routeKm);
+            } else {
+                km = +document.getElementById('inp-dist-manual').value;
+                if (!km || km <= 0) { alert('Wpisz poprawny dystans.'); return; }
             }
 
             const btn = document.getElementById('calc-btn');
@@ -920,26 +1105,29 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         engine_size: +document.getElementById('inp-engine').value,
-                        cylinders: +document.getElementById('inp-cylinders').value,
+                        cylinders: +document.getElementById('inp-cyl').value,
                         vehicle_class: document.getElementById('inp-class').value,
                         fuel_type: document.getElementById('inp-fuel').value,
-                        distance: parseFloat(routeKm),
+                        distance: km,
                     })
                 });
                 const d = await r.json();
 
-                const price = +document.getElementById('inp-price').value;
+                const fuel = document.getElementById('inp-fuel').value;
+                const region = document.getElementById('inp-region').value;
+                const price = PRICES[region][fuel];
                 const cost = (d.total_liters * price).toFixed(2);
-                const fuelType = document.getElementById('inp-fuel').value;
-                const fuelLabel = fuelType === 'D' ? 'diesel' : 'benzyna';
 
                 document.getElementById('results').style.display = 'block';
                 document.getElementById('res-l100').textContent = d.l_per_100km;
                 document.getElementById('res-total').textContent = d.total_liters + ' L';
                 document.getElementById('res-cost').textContent = cost + ' zł';
-                document.getElementById('res-dist').textContent = routeKm;
+                document.getElementById('res-km').textContent = km;
+
+                const fuelName = FUEL_NAMES[fuel];
                 document.getElementById('res-note').textContent =
-                    `Szacowane spalanie dla wybranej klasy pojazdu (${fuelLabel}). Rzeczywiste zużycie może się różnić w zależności od stylu jazdy i warunków trasy.`;
+                    `Szacowane spalanie dla wybranej klasy pojazdu (${fuelName.toLowerCase()}). ` +
+                    `Rzeczywiste zużycie może się różnić w zależności od stylu jazdy i warunków.`;
 
                 const ratings = [
                     { max: 6, label: 'Doskonałe', color: '#16a34a', pct: 10 },
@@ -948,36 +1136,32 @@
                     { max: 15, label: 'Wysokie', color: '#ea580c', pct: 75 },
                     { max: 99, label: 'Krytyczne', color: '#dc2626', pct: 93 },
                 ];
-                const rating = ratings.find(rt => d.l_per_100km < rt.max);
-                document.getElementById('rating-label').textContent = rating.label;
-                document.getElementById('rating-label').style.color = rating.color;
+                const rt = ratings.find(x => d.l_per_100km < x.max);
+                document.getElementById('rating-lbl').textContent = rt.label;
+                document.getElementById('rating-lbl').style.color = rt.color;
                 const bar = document.getElementById('rating-bar');
-                bar.style.width = rating.pct + '%';
-                bar.style.background = rating.color;
+                bar.style.width = rt.pct + '%';
+                bar.style.background = rt.color;
 
-                // Scroll do wyników
                 document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-            } catch (e) {
-                alert('Błąd połączenia z API.');
-            }
+            } catch (e) { alert('Błąd połączenia z API.'); }
 
             btn.disabled = false;
             btn.textContent = 'Oblicz zużycie';
         }
 
-        // ── INIT ─────────────────────────────────────────────
+        // ── INIT ─────────────────────────────────────────────────────────
         setupSearch('search-a', 'sug-a', 'a');
         setupSearch('search-b', 'sug-b', 'b');
+        updatePrice();
 
-        // Sprawdź status modelu
-        fetch(`${API}/stats`)
-            .catch(() => {
-                const b = document.getElementById('model-badge');
-                b.textContent = 'Offline';
-                b.className = 'badge badge-dim';
-                b.style.color = '#dc2626';
-            });
+        fetch(`${API}/stats`).catch(() => {
+            const b = document.getElementById('model-badge');
+            b.textContent = 'Offline';
+            b.className = 'badge badge-dim';
+            b.style.color = '#dc2626';
+        });
     </script>
 </body>
 
