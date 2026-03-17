@@ -36,7 +36,6 @@
             min-height: 100vh;
         }
 
-        /* ── HEADER ─────────────────────── */
         header {
             background: var(--text);
             height: 60px;
@@ -136,14 +135,12 @@
             }
         }
 
-        /* ── LAYOUT ─────────────────────── */
         .app {
             display: grid;
             grid-template-columns: 380px 1fr;
             height: calc(100vh - 60px);
         }
 
-        /* ── SIDEBAR ────────────────────── */
         .sidebar {
             background: var(--surface);
             border-right: 1px solid var(--border);
@@ -172,7 +169,6 @@
             margin: 16px 0;
         }
 
-        /* ── TOGGLE ─────────────────────── */
         .toggle-wrap {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -207,7 +203,6 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
-        /* ── MAP MODE ───────────────────── */
         #mode-map {
             display: block;
         }
@@ -216,7 +211,6 @@
             display: none;
         }
 
-        /* ── SEARCH ─────────────────────── */
         .search-wrap {
             position: relative;
             margin-bottom: 6px;
@@ -323,7 +317,6 @@
             margin-top: 1px;
         }
 
-        /* Route pill */
         .route-pill {
             display: none;
             background: var(--bg);
@@ -367,7 +360,6 @@
             color: var(--red);
         }
 
-        /* ── FIELD ──────────────────────── */
         .field-label {
             font-size: 10px;
             font-weight: 500;
@@ -449,6 +441,7 @@
             outline: none;
             transition: border-color 0.15s;
             -moz-appearance: textfield;
+            appearance: textfield;
         }
 
         .field-input::-webkit-outer-spin-button,
@@ -495,7 +488,6 @@
             gap: 0 10px;
         }
 
-        /* ── FUEL PRICE DISPLAY ─────────── */
         .price-display {
             background: var(--bg);
             border: 1px solid var(--border);
@@ -527,7 +519,6 @@
             text-align: right;
         }
 
-        /* ── BUTTON ─────────────────────── */
         .btn-calc {
             width: 100%;
             background: var(--text);
@@ -552,7 +543,6 @@
             cursor: not-allowed;
         }
 
-        /* ── RESULTS ────────────────────── */
         #results {
             display: none;
         }
@@ -626,7 +616,6 @@
             line-height: 1.5;
         }
 
-        /* ── MAP ────────────────────────── */
         #map {
             height: 100%;
             z-index: 1;
@@ -636,7 +625,6 @@
             font-size: 10px !important;
         }
 
-        /* ── MANUAL DIST ────────────────── */
         .manual-hint {
             font-size: 12px;
             color: var(--muted);
@@ -648,7 +636,6 @@
             line-height: 1.4;
         }
 
-        /* SCROLLBAR */
         .sidebar::-webkit-scrollbar {
             width: 3px;
         }
@@ -701,10 +688,8 @@
         <aside class="sidebar">
             <div class="sidebar-inner">
 
-                <!-- TRASA -->
                 <p class="section-title">Trasa</p>
 
-                <!-- Toggle mapa / ręcznie -->
                 <div class="toggle-wrap">
                     <button class="toggle-btn active" id="btn-map" onclick="setMode('map')">
                         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -723,7 +708,6 @@
                     </button>
                 </div>
 
-                <!-- MAP MODE -->
                 <div id="mode-map">
                     <div>
                         <p class="search-label"><span class="point-dot dot-a"></span>Punkt startowy</p>
@@ -762,7 +746,6 @@
                     </div>
                 </div>
 
-                <!-- MANUAL MODE -->
                 <div id="mode-manual">
                     <p class="manual-hint">Wpisz dystans trasy ręcznie jeśli znasz odległość.</p>
                     <p class="field-label">Dystans trasy</p>
@@ -774,7 +757,6 @@
 
                 <div class="divider"></div>
 
-                <!-- POJAZD -->
                 <p class="section-title">Parametry pojazdu</p>
 
                 <div class="fields-2">
@@ -826,7 +808,6 @@
 
                 <div class="divider"></div>
 
-                <!-- PALIWO -->
                 <p class="section-title">Paliwo i ceny</p>
 
                 <div class="fields-2">
@@ -877,7 +858,6 @@
 
                 <div class="divider"></div>
 
-                <!-- WYNIKI -->
                 <div id="results">
                     <p class="section-title">Wyniki</p>
                     <div class="result-grid">
@@ -919,8 +899,6 @@
     <script>
         const API = 'https://mlprojekt-production.up.railway.app';
 
-        // ── CENY PALIW (Reflex, 13.03.2026) ─────────────────────────────
-        // Źródło: reflex.com.pl — cotygodniowy monitoring
         const PRICES = {
             'dolnoslaskie': { X: 6.52, Z: 6.90, D: 6.28 },
             'kujawsko-pomorskie': { X: 6.55, Z: 6.92, D: 6.30 },
@@ -951,7 +929,6 @@
             document.getElementById('price-meta').textContent = FUEL_NAMES[fuel] + ' · ' + regionLabel;
         }
 
-        // ── TRYB ─────────────────────────────────────────────────────────
         let currentMode = 'map';
 
         function setMode(mode) {
@@ -962,7 +939,6 @@
             document.getElementById('btn-manual').classList.toggle('active', mode === 'manual');
         }
 
-        // ── MAPA ─────────────────────────────────────────────────────────
         const map = L.map('map', { zoomControl: true }).setView([52.0, 19.5], 6);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -981,7 +957,6 @@
         let markerA = null, markerB = null, routeLine = null;
         let coordA = null, coordB = null, routeKm = null;
 
-        // ── WYSZUKIWARKA ─────────────────────────────────────────────────
         let debounce = {};
 
         function setupSearch(inputId, sugId, point) {
@@ -1084,7 +1059,6 @@
             map.setView([52.0, 19.5], 6);
         }
 
-        // ── KALKULACJA ───────────────────────────────────────────────────
         async function calculate() {
             let km;
             if (currentMode === 'map') {
@@ -1151,7 +1125,6 @@
             btn.textContent = 'Oblicz zużycie';
         }
 
-        // ── INIT ─────────────────────────────────────────────────────────
         setupSearch('search-a', 'sug-a', 'a');
         setupSearch('search-b', 'sug-b', 'b');
         updatePrice();
