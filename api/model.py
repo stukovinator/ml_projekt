@@ -8,7 +8,6 @@ import joblib
 import json
 import os
 
-# ── 1. POBIERZ DANE ──────────────────────────────────────
 dfs = []
 COL_MAP_OLD = {
     'ENGINE SIZE': 'engine_size', 'CYLINDERS': 'cylinders',
@@ -37,19 +36,17 @@ for year in [2015, 2021, 2022, 2023, 2024]:
 
 df = pd.concat(dfs, ignore_index=True)
 
-# ── 2. OCZYŚĆ ────────────────────────────────────────────
 for col in ['combined_l100','engine_size','cylinders','co2']:
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
 df = df.dropna(subset=['combined_l100','engine_size','cylinders'])
 df = df[df['fuel_type'].isin(['X','Z','D'])]
-df = df[df['combined_l100'].between(3, 25)]  # usuń outliery
+df = df[df['combined_l100'].between(3, 25)]
 
 print(f"\nŁącznie: {df.shape}")
 print(df['fuel_type'].value_counts())
 print(df['combined_l100'].describe())
 
-# ── 3. CECHY ─────────────────────────────────────────────
 le_class = LabelEncoder()
 le_fuel  = LabelEncoder()
 df['vehicle_class_enc'] = le_class.fit_transform(df['vehicle_class'].astype(str))
@@ -59,7 +56,6 @@ features = features = ['engine_size', 'cylinders', 'vehicle_class_enc', 'fuel_ty
 X = df[features].dropna()
 y = df.loc[X.index, 'combined_l100']
 
-# ── 4. TRENUJ ─────────────────────────────────────────────
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 model = RandomForestRegressor(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
@@ -69,7 +65,6 @@ r2  = r2_score(y_test, model.predict(X_test))
 print(f"\nMAE: {mae:.2f} L/100km")
 print(f"R²:  {r2:.3f}")
 
-# ── 5. ZAPISZ ─────────────────────────────────────────────
 os.makedirs('model', exist_ok=True)
 joblib.dump(model, 'model/model.pkl')
 
