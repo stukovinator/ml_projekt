@@ -13,9 +13,7 @@ import joblib
 import json
 import os
 
-
-# oficjalne dane rządu Kanady — zużycie paliwa dla każdego
-# modelu samochodu dostępnego w sprzedaży (L/100km)
+# oficjalne dane rządu Kanady — zużycie paliwa dla każdego modelu samochodu dostępnego w sprzedaży (L/100km)
 
 print("Pobieranie danych z NRCan...")
 
@@ -54,7 +52,6 @@ for rok in [2015, 2021, 2022, 2023, 2024]:
 df = pd.concat(tabele, ignore_index=True)
 print(f"Łącznie: {len(df)} rekordów\n")
 
-
 # zamieniamy tekst na liczby, usuwamy brakujące wartości
 # zostawiamy tylko pojazdy benzynowe i diesle
 
@@ -75,8 +72,7 @@ koder_paliwa = LabelEncoder()
 df['vehicle_class_enc'] = koder_klasy.fit_transform(df['vehicle_class'].astype(str))
 df['fuel_type_enc']     = koder_paliwa.fit_transform(df['fuel_type'].astype(str))
 
-# X = cechy wejściowe
-# y = zmienna docelowa
+# X = cechy wejściowe  y = zmienna docelowa
 
 CECHY = ['engine_size', 'cylinders', 'vehicle_class_enc', 'fuel_type_enc']
 
@@ -182,7 +178,6 @@ OGRANICZENIA
   Rzeczywiste spalanie moze roznic sie o 10-30% w zaleznosci
   od stylu jazdy, warunkow drogowych i temperatury.
 
-================================================================
 """
 
 with open('model/raport_modelu.txt', 'w', encoding='utf-8') as f:

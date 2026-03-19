@@ -1,6 +1,7 @@
 ================================================================
  SPALO — RAPORT MODELU ML
  Wygenerowano: 19.03.2026 08:22
+ Strona: https://stukovinator.github.io/ml_projekt/
 ================================================================
 
 DATASET
@@ -51,4 +52,3 @@ OGRANICZENIA
   Rzeczywiste spalanie moze roznic sie o 10-30% w zaleznosci
   od stylu jazdy, warunkow drogowych i temperatury.
 
-================================================================

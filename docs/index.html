@@ -514,7 +514,6 @@
     document.getElementById('empty-state').classList.remove('hidden');
   }
 
-  // ── CALCULATE ──────────────────────────────────────────────
   async function calculate() {
     let km;
     if (currentMode === 'map') {
@@ -582,7 +581,6 @@
     btn.textContent = 'Oblicz zużycie →';
   }
 
-  // ── STATS ──────────────────────────────────────────────────
   fetch(`${API}/stats`)
     .then(r => r.json())
     .then(d => {
