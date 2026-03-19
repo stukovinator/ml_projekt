@@ -1,0 +1,54 @@
+================================================================
+ SPALO — RAPORT MODELU ML
+ Wygenerowano: 19.03.2026 08:22
+================================================================
+
+DATASET
+  Zrodlo:              Natural Resources Canada (NRCan)
+  Lata:                2015, 2021-2024
+  Rekordow lacznie:    4525
+  Probek treningowych: 3620
+  Probek testowych:    905
+
+ALGORYTM
+  Random Forest Regressor
+  Liczba drzew:   100
+  random_state:   42
+
+CECHY WEJSCIOWE
+  engine_size               pojemnosc silnika w litrach
+  cylinders                 liczba cylindrow
+  vehicle_class_enc         klasa pojazdu (zakodowana liczbowo)
+  fuel_type_enc             rodzaj paliwa (zakodowany liczbowo)
+
+SKUTECZNOSC
+  MAE = 0.695 L/100km
+        Model myli sie srednio o 0.70 L/100km.
+        Np. dla auta spalajacego 8.0 L/100km model zwroci
+        wartosc z zakresu 7.3-8.7 L/100km.
+
+  R2  = 0.860
+        Model wyjasnia 86.0% zmiennosci zuzycia paliwa.
+        (0.0 = model losowy, 1.0 = model idealny)
+
+WAZNOSC CECH
+  engine_size               71.7%
+  cylinders                 13.7%
+  vehicle_class_enc         11.1%
+  fuel_type_enc             3.5%
+
+KLASY POJAZDOW (30 kategorii)
+  
+COMPACT  Compact  FULL-SIZE  Full-size  MID-SIZE  MINICOMPACT  MINIVAN  Mid-size  Minicompact  Minivan  PICKUP TRUCK - SMALL  PICKUP TRUCK - STANDARD  Pickup truck: Small  Pickup truck: Standard  SPECIAL PURPOSE VEHICLE  STATION WAGON - MID-SIZE  STATION WAGON - SMALL  SUBCOMPACT  SUV - SMALL  SUV - STANDARD  Special purpose vehicle  Sport utility vehicle: Small  Sport utility vehicle: Standard  Station wagon: Mid-size  Station wagon: Small  Subcompact  TWO-SEATER  Two-seater  VAN - PASSENGER  Van: Passenger
+
+RODZAJE PALIWA
+  X = Benzyna 95
+  Z = Benzyna 98
+  D = Diesel
+
+OGRANICZENIA
+  Model przewiduje zuzycie w warunkach testowych.
+  Rzeczywiste spalanie moze roznic sie o 10-30% w zaleznosci
+  od stylu jazdy, warunkow drogowych i temperatury.
+
+================================================================
