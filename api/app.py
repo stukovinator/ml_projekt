@@ -27,7 +27,6 @@ def predict():
     vehicle_class = data.get('vehicle_class', 'Compact')
     fuel_type     = data.get('fuel_type', 'X')
 
-    # Enkoduj tak samo jak przy trenowaniu
     try:
         vc_enc = encoders['class'].transform([vehicle_class])[0]
     except ValueError:
@@ -51,7 +50,7 @@ def predict():
 
     dist       = float(data.get('distance', 500))
     total      = round((l100 / 100) * dist, 1)
-    jerry_cans = -(-int(total) // 20)  # ceiling division
+    jerry_cans = -(-int(total) // 20)
 
     return jsonify({
         'l_per_100km': l100,
